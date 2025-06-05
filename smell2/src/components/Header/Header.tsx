@@ -70,7 +70,7 @@ const Header: React.FC = () => {
           href="/"
           sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
         >
-          KaoList
+          KaoListああああ
         </Typography>
 
         {/* 右：フィルターと投稿 */}
