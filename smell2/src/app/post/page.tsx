@@ -16,6 +16,7 @@ const PostForm: React.FC = () => {
     volume: '',
     price: '',
     type: '',
+    smelltype: '',
     gender: '',
     scent: '',
     longevity: 0,
@@ -54,9 +55,10 @@ const PostForm: React.FC = () => {
         <FormControl>
           <InputLabel>香水の種類</InputLabel>
           <Select name="type" value={form.type} onChange={handleChange}>
-            <MenuItem value="EDT">EDT</MenuItem>
+            <MenuItem value="P">P</MenuItem>
             <MenuItem value="EDP">EDP</MenuItem>
-            <MenuItem value="香水">香水</MenuItem>
+            <MenuItem value="EDT">EDT</MenuItem>
+            <MenuItem value="EDC">EDC</MenuItem>
           </Select>
         </FormControl>
 
@@ -69,19 +71,44 @@ const PostForm: React.FC = () => {
           </Select>
         </FormControl>
 
-        <TextField label="香りの説明" name="scent" value={form.scent} onChange={handleChange} />
+        <FormControl>
+          <InputLabel>香りの種類</InputLabel>
+          <Select name="type" value={form.smelltype} onChange={handleChange}>
+            <MenuItem value="シトラス">シトラス</MenuItem>
+            <MenuItem value="フルーティ">フルーティ</MenuItem>
+            <MenuItem value="フローラル">フローラル</MenuItem>
+            <MenuItem value="シプレー">シプレー</MenuItem>
+            <MenuItem value="オリエンタル">オリエンタル</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
-      <Box mt={4}>
-        <Typography gutterBottom>匂いの持続</Typography>
-        <Rating value={form.longevity} onChange={(_, val) => handleRatingChange('longevity', val)} />
+     <Box mt={4} display="flex" gap={4}>
+  <Box display="flex" flexDirection="column" alignItems="center">
+    <Typography gutterBottom>匂いの持続</Typography>
+    <Rating
+      value={form.longevity}
+      onChange={(_, val) => handleRatingChange('longevity', val)}
+    />
+  </Box>
 
-        <Typography gutterBottom>コストパフォーマンス</Typography>
-        <Rating value={form.costPerformance} onChange={(_, val) => handleRatingChange('costPerformance', val)} />
+  <Box display="flex" flexDirection="column" alignItems="center">
+    <Typography gutterBottom>コストパフォーマンス</Typography>
+    <Rating
+      value={form.costPerformance}
+      onChange={(_, val) => handleRatingChange('costPerformance', val)}
+    />
+  </Box>
 
-        <Typography gutterBottom>手に入れやすさ</Typography>
-        <Rating value={form.availability} onChange={(_, val) => handleRatingChange('availability', val)} />
-      </Box>
+  <Box display="flex" flexDirection="column" alignItems="center">
+    <Typography gutterBottom>手に入れやすさ</Typography>
+    <Rating
+      value={form.availability}
+      onChange={(_, val) => handleRatingChange('availability', val)}
+    />
+  </Box>
+</Box>
+
 
       <Box mt={3}>
         <TextField
