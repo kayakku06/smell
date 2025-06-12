@@ -14,11 +14,17 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { SelectChangeEvent } from '@mui/material/Select';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // ← 追加！
 
 const Header: React.FC = () => {
   const [filter, setFilter] = useState('all');
   const [subFilter, setSubFilter] = useState('');
+  const router = useRouter(); // ← 追加！
 
+  const handlePostClick = () => {
+    router.push('/post');
+  };
   const handleFilterChange = (event: SelectChangeEvent) => {
     const value = event.target.value;
     setFilter(value);
@@ -64,14 +70,15 @@ const Header: React.FC = () => {
     <AppBar position="static" sx={{ backgroundColor: '#f8f4f0', color: '#333' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* 左：ロゴ */}
-        <Typography
-          variant="h6"
-          component="a"
-          href="/"
-          sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
-        >
-          KaoList
-        </Typography>
+        <Link href="/home" passHref>
+  <Typography
+    variant="h6"
+    component="div" // ← "a" → "div" に変更
+    sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold', cursor: 'pointer' }}
+  >
+    KaoList
+  </Typography>
+</Link>
 
         {/* 右：フィルターと投稿 */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -117,7 +124,7 @@ const Header: React.FC = () => {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            href="/post"
+              onClick={handlePostClick} // ← ここを変更！
           >
             投稿する
           </Button>
