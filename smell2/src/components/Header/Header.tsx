@@ -15,11 +15,16 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // ← 追加！
 
 const Header: React.FC = () => {
   const [filter, setFilter] = useState('all');
   const [subFilter, setSubFilter] = useState('');
+  const router = useRouter(); // ← 追加！
 
+  const handlePostClick = () => {
+    router.push('/post');
+  };
   const handleFilterChange = (event: SelectChangeEvent) => {
     const value = event.target.value;
     setFilter(value);
@@ -119,7 +124,7 @@ const Header: React.FC = () => {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            href="/post"
+              onClick={handlePostClick} // ← ここを変更！
           >
             投稿する
           </Button>
