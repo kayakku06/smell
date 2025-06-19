@@ -4,7 +4,7 @@ import React from 'react';
 import Header from '@/components/Header/Header';
 import PostCard from '@/components/postcard/postcard';
 type Post = {
-  id: string; // 詳細ページ用
+  id: string;
   perfumeName: string;
   brandName?: string;
   volume: string;
@@ -16,7 +16,8 @@ type Post = {
   costPerformance: number;
   longevity: number;
   accessibility: number;
-  postedAt: string; // 投稿日
+  postedAt: string;
+  comment?: string;
 };
 
 
@@ -35,6 +36,7 @@ const testPost: Post[] = [
     longevity: 5,
     accessibility: 3,
     postedAt: '2025-06-12',
+    comment: 'とても良い香りで、持続性も高いです。',
   },
 ];
 export default function PostPage() {

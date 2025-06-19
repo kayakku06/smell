@@ -19,6 +19,7 @@ type Post = {
   longevity: number;
   accessibility: number;
   postedAt: string;
+  comment?: string;
 };
 
 const PostCard: React.FC<Post> = ({
@@ -35,11 +36,13 @@ const PostCard: React.FC<Post> = ({
   longevity,
   accessibility,
   postedAt,
+  comment,
 }) => {
   const averageRating = ((costPerformance + longevity + accessibility) / 3).toFixed(1);
 
   return (
-    <Card sx={{ display: 'flex', width: '100%', maxWidth: 800, margin: 2, borderRadius: 3, boxShadow: 3 }}>
+    <Card sx={{ display: 'flex', width: '100%', maxWidth: 1000, margin: 2, borderRadius: 3, boxShadow: 3 }}>
+      {/* 画像 */}
       {imageSrc && (
         <Box sx={{ minWidth: 250, position: 'relative' }}>
           <Image
@@ -51,6 +54,8 @@ const PostCard: React.FC<Post> = ({
           />
         </Box>
       )}
+
+      {/* 中央: 香水情報 */}
       <CardContent sx={{ flex: 1 }}>
         <Typography variant="h6" fontWeight="bold">{perfumeName}</Typography>
         <Typography variant="subtitle2" color="text.secondary">
@@ -82,6 +87,26 @@ const PostCard: React.FC<Post> = ({
           </Link>
         </Box>
       </CardContent>
+
+      {/* 右側: コメント欄 */}
+      <Box
+        sx={{
+          width: 250,
+          padding: 2,
+          borderLeft: '1px solid #ccc',
+          backgroundColor: '#f9f9f9',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+        }}
+      >
+        <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+          コメント
+        </Typography>
+        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+          {comment || 'コメントはまだありません。'}
+        </Typography>
+      </Box>
     </Card>
   );
 };
