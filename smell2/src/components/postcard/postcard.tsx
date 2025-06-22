@@ -12,16 +12,15 @@ type Post = {
   volume: string;
   imageSrc?: string;
   price?: string;
-  perfumeType?: string;
+  smellType?: string;
   gender?: string;
   scent: string;
-  costPerformance: number;
   longevity: number;
   accessibility: number;
+  costPerformance: number;
   postedAt: string;
   comment?: string;
 };
-
 const PostCard: React.FC<Post> = ({
   id,
   perfumeName,
@@ -29,7 +28,7 @@ const PostCard: React.FC<Post> = ({
   volume,
   imageSrc,
   price,
-  perfumeType,
+  smellType,
   gender,
   scent,
   costPerformance,
@@ -62,7 +61,7 @@ const PostCard: React.FC<Post> = ({
           ブランド: {brandName ?? '未設定'} / 内容量: {volume}
         </Typography>
         <Typography variant="body2" mt={1}>
-          匂い: {scent} / タイプ: {perfumeType ?? '未設定'} / 性別: {gender ?? '未設定'}
+          匂い: {scent} / タイプ: {smellType ?? '未設定'} / 性別: {gender ?? '未設定'}
         </Typography>
         <Typography variant="body2" mt={1}>
           購入金額: {price ?? '未設定'}円
@@ -79,13 +78,7 @@ const PostCard: React.FC<Post> = ({
         <Typography variant="caption" color="text.secondary" display="block" mt={1}>
           投稿日: {postedAt}
         </Typography>
-        <Box mt={2}>
-          <Link href={`/detail/${id}`} passHref>
-            <Button variant="outlined" fullWidth>
-              詳細を見る
-            </Button>
-          </Link>
-        </Box>
+       
       </CardContent>
 
       {/* 右側: コメント欄 */}

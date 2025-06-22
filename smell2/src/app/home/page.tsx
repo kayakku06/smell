@@ -10,12 +10,12 @@ type Post = {
   volume: string;
   imageSrc?: string;
   price?: string;
-  perfumeType?: string;
+  smellType?: string;
   gender?: string;
   scent: string;
-  costPerformance: number;
   longevity: number;
   accessibility: number;
+  costPerformance: number;
   postedAt: string;
   comment?: string;
 };
@@ -29,24 +29,44 @@ const testPost: Post[] = [
     volume: '75ml',
     imageSrc: '/写真/images.jpeg',
     price: '30000',
-    perfumeType: 'EDP',
+    smellType: 'EDP',
     gender: 'ユニセックス',
     scent: 'フローラル',
-    costPerformance: 4,
+
     longevity: 5,
     accessibility: 3,
-    postedAt: '2025-06-12',
+    costPerformance: 4,
+    postedAt: '2025-06-11T10:00:00Z',
     comment: 'とても良い香りで、持続性も高いです。',
+  },
+  {
+    id: '2',
+    perfumeName: 'Another13',
+    brandName: 'Le Labo',
+    volume: '75ml',
+    imageSrc: '/写真/org.jpg',
+    price: '30000',
+    smellType: 'EDP',
+    gender: 'ユニセックス',
+    scent: 'シプレー',
+    costPerformance: 3,
+    longevity: 4,
+    accessibility: 2,
+    postedAt: '2025-06-12T15:00:00Z',
+    comment: 'シンプルで洗練された香り。日常使いに最適です。',
   },
 ];
 export default function PostPage() {
+   const sortedPosts = [...testPost].sort((a, b) => {
+    return new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime();
+  });
   return (
     <>
       <Header />
       <main style={{ padding: '24px' }}>
         <h2>ようこそ KaoList へ</h2>
         <div style={{ marginBottom: '24px' }}>
-          {testPost.map((post) => (
+          {sortedPosts.map((post) => (
             <PostCard key={post.id} {...post} />
           ))}
         </div>
