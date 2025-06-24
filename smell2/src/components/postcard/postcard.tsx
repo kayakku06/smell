@@ -58,7 +58,7 @@ const PostCard: React.FC<Post> = ({
       <CardContent sx={{ flex: 1 }}>
         <Typography variant="h6" fontWeight="bold">{perfumeName}</Typography>
         <Typography variant="subtitle2" color="text.secondary">
-          ブランド: {brandName ?? '未設定'} / 内容量: {volume}
+          ブランド: {brandName ?? '未設定'} / 内容量: {volume}ml
         </Typography>
         <Typography variant="body2" mt={1}>
           匂い: {scent} / タイプ: {smellType ?? '未設定'} / 性別: {gender ?? '未設定'}
