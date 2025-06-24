@@ -7,53 +7,71 @@ import {
   Typography,
   Button,
   Box,
-  Select,
+  Menu,
   MenuItem,
-  FormControl,
-  InputLabel,
+  IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { SelectChangeEvent } from '@mui/material/Select';
+import SearchIcon from '@mui/icons-material/Search';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // ← 追加！
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const Header: React.FC = () => {
-  const [filter, setFilter] = useState('all');
-  const [subFilter, setSubFilter] = useState('');
-  const router = useRouter(); // ← 追加！
+  const searchParams = useSearchParams();
+  const initialFilter = searchParams.get('filter') || 'all';
+  const initialSub = searchParams.get('sub') || '';
+
+  const [filter, setFilter] = useState(initialFilter);
+  const [subFilter, setSubFilter] = useState(initialSub);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const router = useRouter();
 
   const handlePostClick = () => {
     router.push('/post');
   };
-  const handleFilterChange = (event: SelectChangeEvent) => {
-    const value = event.target.value;
+
+  const handleCategoryClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCategorySelect = (value: string) => {
     setFilter(value);
     setSubFilter('');
-    console.log('カテゴリ:', value);
+    setAnchorEl(null);
+
+    const params = new URLSearchParams();
+    params.set('filter', value);
+    router.push(`/home?${params.toString()}`);
   };
 
-  const handleSubFilterChange = (event: SelectChangeEvent) => {
-    const value = event.target.value;
+  const handleSubFilterChange = (value: string) => {
     setSubFilter(value);
-    console.log('サブカテゴリ:', value);
+    const params = new URLSearchParams();
+    params.set('filter', filter);
+    params.set('sub', value);
+    router.push(`/home?${params.toString()}`);
   };
 
-  // サブカテゴリ一覧を返す
   const getSubOptions = () => {
     if (filter === 'gender') {
       return [
-        { value: 'men', label: 'メンズ' },
-        { value: 'women', label: 'レディース' },
-        { value: 'unisex', label: 'ユニセックス' },
+        { value: 'メンズ', label: 'メンズ' },
+        { value: 'レディース', label: 'レディース' },
+        { value: 'ユニセックス', label: 'ユニセックス' },
       ];
     }
     if (filter === 'scent') {
       return [
-        { value: 'citrus', label: 'シトラス' },
-        { value: 'fruity', label: 'フルーティ' },
-        { value: 'floral', label: 'フローラル' },
-        { value: 'chypre', label: 'シプレー' },
-        { value: 'oriental', label: 'オリエンタル' },
+        { value: 'シトラス', label: 'シトラス' },
+        { value: 'フルーティ', label: 'フルーティ' },
+        { value: 'フローラル', label: 'フローラル' },
+        { value: 'シプレー', label: 'シプレー' },
+        { value: 'オリエンタル', label: 'オリエンタル' },
       ];
     }
     if (filter === 'price') {
@@ -71,52 +89,54 @@ const Header: React.FC = () => {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* 左：ロゴ */}
         <Link href="/home" passHref>
-  <Typography
-    variant="h6"
-    component="div" // ← "a" → "div" に変更
-    sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold', cursor: 'pointer' }}
-  >
-    KaoList
-  </Typography>
-</Link>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold', cursor: 'pointer' }}
+          >
+            KaoList
+          </Typography>
+        </Link>
 
-        {/* 右：フィルターと投稿 */}
+        {/* 右：カテゴリ選択 + サブカテゴリ + 投稿 */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* メインカテゴリ選択 */}
-          <FormControl sx={{ minWidth: 140 }}>
-            <InputLabel id="filter-label" sx={{ color: '#333' }}>カテゴリ</InputLabel>
-            <Select
-              labelId="filter-label"
-              value={filter}
-              label="カテゴリ"
-              onChange={handleFilterChange}
-              sx={{ color: '#333' }}
-            >
-              <MenuItem value="all">すべて</MenuItem>
-              <MenuItem value="gender">性別</MenuItem>
-              <MenuItem value="scent">香り</MenuItem>
-              <MenuItem value="price">購入金額</MenuItem>
-            </Select>
-          </FormControl>
+          {/* メインカテゴリ（アイコン + メニュー） */}
+          <Box>
+            <IconButton onClick={handleCategoryClick} sx={{ color: '#333' }}>
+              <SearchIcon />
+              <Typography sx={{ ml: 1, fontSize: '0.9rem' }}>フィルター</Typography>
+            </IconButton>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+              <MenuItem onClick={() => handleCategorySelect('all')}>すべて</MenuItem>
+              <MenuItem onClick={() => handleCategorySelect('gender')}>性別</MenuItem>
+              <MenuItem onClick={() => handleCategorySelect('scent')}>香り</MenuItem>
+              <MenuItem onClick={() => handleCategorySelect('price')}>購入金額</MenuItem>
+            </Menu>
+          </Box>
 
-          {/* サブカテゴリ（必要なときだけ） */}
+          {/* サブカテゴリボタン */}
           {['gender', 'scent', 'price'].includes(filter) && (
-            <FormControl sx={{ minWidth: 160 }}>
-              <InputLabel id="subfilter-label" sx={{ color: '#333' }}>詳細</InputLabel>
-              <Select
-                labelId="subfilter-label"
-                value={subFilter}
-                label="詳細"
-                onChange={handleSubFilterChange}
-                sx={{ color: '#333' }}
-              >
-                {getSubOptions().map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {getSubOptions().map((option) => (
+                <Button
+                  key={option.value}
+                  variant={subFilter === option.value ? 'contained' : 'outlined'}
+                  size="small"
+                  onClick={() => handleSubFilterChange(option.value)}
+                  sx={{
+                    textTransform: 'none',
+                    color: subFilter === option.value ? 'white' : '#333',
+                    backgroundColor: subFilter === option.value ? '#1976d2' : 'transparent',
+                    borderColor: '#ccc',
+                    '&:hover': {
+                      backgroundColor: subFilter === option.value ? '#1565c0' : '#f0f0f0',
+                    },
+                  }}
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </Box>
           )}
 
           {/* 投稿ボタン */}
@@ -124,7 +144,7 @@ const Header: React.FC = () => {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-              onClick={handlePostClick} // ← ここを変更！
+            onClick={handlePostClick}
           >
             投稿する
           </Button>
