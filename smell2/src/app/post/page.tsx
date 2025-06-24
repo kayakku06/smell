@@ -3,12 +3,13 @@ import { supabase, getImageUrl } from '@/lib/supabase';
 import Header from '@/components/Header/Header';
 import React, { useState } from 'react';
 import {
-  Box, TextField, Typography, Button, Rating, MenuItem, Select, InputLabel, FormControl
+  Box, TextField, Typography, Button, Rating, MenuItem, Select, InputLabel, FormControl, InputAdornment
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
-
+import { useRouter } from 'next/navigation';
 
 const PostCardForm: React.FC = () => {
+  const router = useRouter(); // ← 追加
   const [form, setForm] = useState({
     perfumeName: '',
     brandName: '',
@@ -21,23 +22,31 @@ const PostCardForm: React.FC = () => {
     costPerformance: 0,
     availability: 0,
     comment: '',
-    imageSrc: null as File | null, // ← ここが変更点
+    imageSrc: null as File | null,
   });
 
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
   ) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
 
+    // 数値項目に対してマイナス値を防ぐ
+    if ((name === 'price' || name === 'volume') && parseInt(value) < 0) {
+      setForm(prev => ({ ...prev, [name]: '0' }));
+    } else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
+  };
   const handleRatingChange = (name: string, value: number | null) => {
     setForm(prev => ({ ...prev, [name]: value ?? 0 }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setForm(prev => ({ ...prev, imageSrc: e.target.files![0] }));
+    const file = e.target.files?.[0];
+    if (file) {
+      setForm(prev => ({ ...prev, imageSrc: file }));
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -60,7 +69,7 @@ const PostCardForm: React.FC = () => {
 
         const { error: imageError } = await supabase
           .storage
-          .from('perfume-images') // ← あなたのバケット名
+          .from('perfume-images')
           .upload(filePath, form.imageSrc);
 
         if (imageError) {
@@ -85,7 +94,7 @@ const PostCardForm: React.FC = () => {
         costPerformance: form.costPerformance ?? 0,
         accessibility: form.availability ?? 0,
         comment: form.comment,
-        imageSrc: uploadedImageUrl || null, // ← 実際のURLを格納
+        imageSrc: uploadedImageUrl || null,
       };
 
       const { error: insertError } = await supabase.from('post').insert([insertData]);
@@ -95,7 +104,26 @@ const PostCardForm: React.FC = () => {
         alert(`投稿に失敗しました: ${insertError.message}\n詳細: ${insertError.details}`);
       } else {
         alert('投稿が完了しました！（画像付き）');
+        setForm({
+          perfumeName: '',
+          brandName: '',
+          volume: '',
+          price: '',
+          smellType: '',
+          gender: '',
+          scent: '',
+          longevity: 0,
+          costPerformance: 0,
+          availability: 0,
+          comment: '',
+          imageSrc: null,
+        });
+        setImagePreview(null); // プレビューも初期化
+
+        // ✅ ホームに遷移
+        router.push('/home');
       }
+
     } catch (err) {
       console.error('Full error object:', err);
       if (err instanceof Error) {
@@ -113,8 +141,32 @@ const PostCardForm: React.FC = () => {
       <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={2}>
         <TextField label="香水名" name="perfumeName" value={form.perfumeName} onChange={handleChange} />
         <TextField label="ブランド名" name="brandName" value={form.brandName} onChange={handleChange} />
-        <TextField label="内容量" name="volume" value={form.volume} onChange={handleChange} />
-        <TextField label="購入金額" name="price" value={form.price} onChange={handleChange} />
+        <TextField
+          label="内容量"
+          name="volume"
+          value={form.volume}
+          onChange={handleChange}
+          type="number"
+          InputProps={{
+            endAdornment: <InputAdornment position="end">ml</InputAdornment>,
+          }}
+          inputProps={{
+            step: 15,  // ← ここがポイント！
+          }}
+        />
+        <TextField
+          label="購入金額"
+          name="price"
+          value={form.price}
+          onChange={handleChange}
+          type="number"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">￥</InputAdornment>,
+          }}
+          inputProps={{
+            step: 1000,  // ← ここがポイント！
+          }}
+        />
 
         <FormControl>
           <InputLabel>性別</InputLabel>
@@ -161,10 +213,15 @@ const PostCardForm: React.FC = () => {
             画像をアップロード
           </Button>
         </label>
-        {form.imageSrc && (
-          <Typography mt={1} fontSize="0.9rem" color="gray">
-            選択された画像: {form.imageSrc.name}
-          </Typography>
+
+        {imagePreview && (
+          <Box mt={2}>
+            <img
+              src={imagePreview}
+              alt="プレビュー"
+              style={{ width: '200px', borderRadius: '8px', objectFit: 'cover' }}
+            />
+          </Box>
         )}
       </Box>
 
