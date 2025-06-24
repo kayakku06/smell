@@ -1,12 +1,12 @@
 'use client';
-
+import { supabase, getImageUrl } from '@/lib/supabase';
 import Header from '@/components/Header/Header';
 import React, { useState } from 'react';
 import {
   Box, TextField, Typography, Button, Rating, MenuItem, Select, InputLabel, FormControl
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
-import { supabase } from '@/lib/supabase';
+
 
 const PostCardForm: React.FC = () => {
   const [form, setForm] = useState({
@@ -21,6 +21,7 @@ const PostCardForm: React.FC = () => {
     costPerformance: 0,
     availability: 0,
     comment: '',
+    imageSrc: null as File | null, // ← ここが変更点
   });
 
   const handleChange = (
@@ -34,49 +35,76 @@ const PostCardForm: React.FC = () => {
     setForm(prev => ({ ...prev, [name]: value ?? 0 }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setForm(prev => ({ ...prev, imageSrc: e.target.files![0] }));
+    }
+  };
+
   const handleSubmit = async () => {
-  try {
-    const volume = parseInt(form.volume, 10);
-    const price = parseInt(form.price, 10);
+    try {
+      const volume = parseInt(form.volume, 10);
+      const price = parseInt(form.price, 10);
 
-    if (isNaN(volume) || isNaN(price)) {
-      alert('内容量や価格は数値で入力してください。');
-      return;
+      if (isNaN(volume) || isNaN(price)) {
+        alert('内容量や価格は数値で入力してください。');
+        return;
+      }
+
+      let uploadedImageUrl = '';
+
+      if (form.imageSrc) {
+        const fileExt = form.imageSrc.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: imageError } = await supabase
+          .storage
+          .from('perfume-images') // ← あなたのバケット名
+          .upload(filePath, form.imageSrc);
+
+        if (imageError) {
+          console.error('Image upload error object:', imageError);
+          const msg = imageError.message || '画像アップロードに失敗しました';
+          alert(`画像のアップロードに失敗しました: ${msg}`);
+          return;
+        }
+
+        uploadedImageUrl = getImageUrl(filePath);
+      }
+
+      const insertData = {
+        perfumeName: form.perfumeName,
+        brandName: form.brandName,
+        volume,
+        price,
+        smellType: form.smellType,
+        gender: form.gender,
+        scent: form.scent,
+        longevity: form.longevity ?? 0,
+        costPerformance: form.costPerformance ?? 0,
+        accessibility: form.availability ?? 0,
+        comment: form.comment,
+        imageSrc: uploadedImageUrl || null, // ← 実際のURLを格納
+      };
+
+      const { error: insertError } = await supabase.from('post').insert([insertData]);
+
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        alert(`投稿に失敗しました: ${insertError.message}\n詳細: ${insertError.details}`);
+      } else {
+        alert('投稿が完了しました！（画像付き）');
+      }
+    } catch (err) {
+      console.error('Full error object:', err);
+      if (err instanceof Error) {
+        alert(`エラーが発生しました: ${err.message}`);
+      } else {
+        alert('エラーが発生しました（不明なエラー）');
+      }
     }
-
-    const insertData = {
-      perfumeName: form.perfumeName,
-      brandName: form.brandName,
-      volume,
-      price,
-      smellType: form.smellType,
-      gender: form.gender,
-      scent: form.scent,
-      longevity: form.longevity ?? 0,
-      costPerformance: form.costPerformance ?? 0,
-      accessibility: form.availability ?? 0, // ← テーブルに合わせてaccessibility
-      comment: form.comment,
-      // created_at: new Date().toISOString(), // ← これは省略してもOK（自動で入る）
-    };
-
-    const { error: insertError } = await supabase.from('post').insert([insertData]);
-
-    if (insertError) {
-      console.error('Insert error:', insertError);
-      alert(`投稿に失敗しました: ${insertError.message}\n詳細: ${insertError.details}`);
-    } else {
-      alert('投稿が完了しました！（画像なし）');
-    }
-  } catch (err) {
-    console.error('Full error object:', err);
-    if (err instanceof Error) {
-      alert(`エラーが発生しました: ${err.message}`);
-    } else {
-      alert('エラーが発生しました（不明なエラー）');
-    }
-  }
-};
-
+  };
 
   return (
     <Box sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
@@ -117,6 +145,27 @@ const PostCardForm: React.FC = () => {
             <MenuItem value="EDC">EDC</MenuItem>
           </Select>
         </FormControl>
+      </Box>
+
+      <Box mt={3}>
+        <Typography gutterBottom>画像を選択</Typography>
+        <label htmlFor="image-upload">
+          <input
+            accept="image/*"
+            id="image-upload"
+            type="file"
+            style={{ display: 'none' }}
+            onChange={handleImageChange}
+          />
+          <Button variant="outlined" component="span">
+            画像をアップロード
+          </Button>
+        </label>
+        {form.imageSrc && (
+          <Typography mt={1} fontSize="0.9rem" color="gray">
+            選択された画像: {form.imageSrc.name}
+          </Typography>
+        )}
       </Box>
 
       <Box mt={4} display="flex" gap={4}>
