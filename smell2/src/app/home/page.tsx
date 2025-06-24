@@ -103,40 +103,57 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <main style={{ padding: '24px' }}>
-        {/* 並び替えセレクト */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 3 }}>
-          <FilterListIcon sx={{ mr: 1, color: '#555' }} />
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <Select
-              value={sort}
-              onChange={handleSortChange}
-              displayEmpty
-              inputProps={{ 'aria-label': '並び替え' }}
-              sx={{
-                backgroundColor: '#fff',
-                borderRadius: 1,
-                fontSize: 14,
-                height: 36,
-              }}
-            >
-              <MenuItem value="newest">新着順</MenuItem>
-              <MenuItem value="oldest">古い順</MenuItem>
-              <MenuItem value="cheap">価格が安い順</MenuItem>
-              <MenuItem value="expensive">価格が高い順</MenuItem>
-              <MenuItem value="highscore">総合評価が高い順</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
+          backgroundColor: '#fff',
+          borderBottom: '1px solid #eee',
+          px: 3,
+          py: 2,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+        }}
+      >
+        <FilterListIcon sx={{ mr: 1, color: '#555' }} />
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <Select
+            value={sort}
+            onChange={handleSortChange}
+            displayEmpty
+            inputProps={{ 'aria-label': '並び替え' }}
+            sx={{
+              backgroundColor: '#fff',
+              borderRadius: 1,
+              fontSize: 14,
+              height: 36,
+            }}
+          >
+            <MenuItem value="newest">新着順</MenuItem>
+            <MenuItem value="oldest">古い順</MenuItem>
+            <MenuItem value="cheap">価格が安い順</MenuItem>
+            <MenuItem value="expensive">価格が高い順</MenuItem>
+            <MenuItem value="highscore">総合評価が高い順</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+<main style={{ padding: '24px' }}>
+  <Typography variant="h5" gutterBottom>ようこそ KaoList へ</Typography>
 
-        <Typography variant="h5" gutterBottom>ようこそ KaoList へ</Typography>
-
-        <div style={{ marginBottom: '24px' }}>
-          {sortedPosts.map((post) => (
-            <PostCard key={post.id} {...post} />
-          ))}
-        </div>
-      </main>
+  <Box
+    sx={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, 1fr)', // 横2枚ずつ
+      gap: 3,
+    }}
+  >
+    {sortedPosts.map((post) => (
+      <PostCard key={post.id} {...post} />
+    ))}
+  </Box>
+</main>
     </>
   );
 }

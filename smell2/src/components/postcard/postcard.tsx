@@ -1,9 +1,7 @@
-// components/PostCard.tsx
-
+'use client';
 import React from 'react';
-import { Card, CardContent, Typography, Box, Rating, Button } from '@mui/material';
+import { Card, CardContent, Typography, Box, Rating } from '@mui/material';
 import Image from 'next/image';
-import Link from 'next/link';
 
 type Post = {
   id: string;
@@ -21,6 +19,7 @@ type Post = {
   created_at: string;
   comment?: string;
 };
+
 const PostCard: React.FC<Post> = ({
   id,
   perfumeName,
@@ -40,23 +39,45 @@ const PostCard: React.FC<Post> = ({
   const averageRating = ((costPerformance + longevity + accessibility) / 3).toFixed(1);
 
   return (
-    <Card sx={{ display: 'flex', width: '100%', maxWidth: 1000, margin: 2, borderRadius: 3, boxShadow: 3 }}>
+    <Card
+      sx={{
+        display: 'flex',
+        alignItems: 'stretch', // 高さを揃える
+        width: '100%',
+        maxWidth: 1000,
+        margin: 2,
+        borderRadius: 3,
+        boxShadow: 3,
+      }}
+    >
       {/* 画像 */}
       {imageSrc && (
-        <Box sx={{ minWidth: 250, position: 'relative' }}>
+        <Box
+          sx={{
+            width: 250,
+            position: 'relative',
+            aspectRatio: '1 / 1', // 正方形に
+            flexShrink: 0,
+          }}
+        >
           <Image
             src={imageSrc}
             alt={perfumeName}
-            width={250}
-            height={250}
-            style={{ objectFit: 'cover', borderTopLeftRadius: 12, borderBottomLeftRadius: 12 }}
+            fill
+            style={{
+              objectFit: 'cover',
+              borderTopLeftRadius: 12,
+              borderBottomLeftRadius: 12,
+            }}
           />
         </Box>
       )}
 
       {/* 中央: 香水情報 */}
-      <CardContent sx={{ flex: 1 }}>
-        <Typography variant="h6" fontWeight="bold">{perfumeName}</Typography>
+      <CardContent sx={{ flex: 1, height: 'auto' }}>
+        <Typography variant="h6" fontWeight="bold">
+          {perfumeName}
+        </Typography>
         <Typography variant="subtitle2" color="text.secondary">
           ブランド: {brandName ?? '未設定'} / 内容量: {volume}ml
         </Typography>
@@ -76,9 +97,15 @@ const PostCard: React.FC<Post> = ({
           <Rating value={parseFloat(averageRating)} precision={0.1} readOnly />
         </Box>
         <Typography variant="caption" color="text.secondary" display="block" mt={1}>
-          投稿日: {created_at}
+          投稿日: {(() => {
+            const date = new Date(created_at);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${month}/${day} ${hours}:${minutes}`;
+          })()}
         </Typography>
-
       </CardContent>
 
       {/* 右側: コメント欄 */}
@@ -91,6 +118,7 @@ const PostCard: React.FC<Post> = ({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
+          height: 'auto',
         }}
       >
         <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
