@@ -18,7 +18,7 @@ type Post = {
   longevity: number;
   accessibility: number;
   costPerformance: number;
-  postedAt: string;
+  created_at: string;
   comment?: string;
 };
 const PostCard: React.FC<Post> = ({
@@ -34,7 +34,7 @@ const PostCard: React.FC<Post> = ({
   costPerformance,
   longevity,
   accessibility,
-  postedAt,
+  created_at,
   comment,
 }) => {
   const averageRating = ((costPerformance + longevity + accessibility) / 3).toFixed(1);
@@ -76,9 +76,9 @@ const PostCard: React.FC<Post> = ({
           <Rating value={parseFloat(averageRating)} precision={0.1} readOnly />
         </Box>
         <Typography variant="caption" color="text.secondary" display="block" mt={1}>
-          投稿日: {postedAt}
+          投稿日: {created_at}
         </Typography>
-       
+
       </CardContent>
 
       {/* 右側: コメント欄 */}
