@@ -14,6 +14,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import Link from 'next/link';
+
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const Header: React.FC = () => {
@@ -23,6 +24,7 @@ const Header: React.FC = () => {
 
   const [filter, setFilter] = useState(initialFilter);
   const [subFilter, setSubFilter] = useState(initialSub);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const router = useRouter();
@@ -44,9 +46,11 @@ const Header: React.FC = () => {
     setSubFilter('');
     setAnchorEl(null);
 
+
     const params = new URLSearchParams();
     params.set('filter', value);
     router.push(`/home?${params.toString()}`);
+
   };
 
   const handleSubFilterChange = (value: string) => {
