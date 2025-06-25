@@ -171,15 +171,15 @@ const PostCardForm: React.FC = () => {
         <FormControl>
           <InputLabel>性別</InputLabel>
           <Select name="gender" value={form.gender} onChange={handleChange}>
-            <MenuItem value="男性">男性</MenuItem>
-            <MenuItem value="女性">女性</MenuItem>
+            <MenuItem value="メンズ">メンズ</MenuItem>
+            <MenuItem value="レディース">レディース</MenuItem>
             <MenuItem value="ユニセックス">ユニセックス</MenuItem>
           </Select>
         </FormControl>
 
         <FormControl>
           <InputLabel>香りの種類</InputLabel>
-          <Select name="smellType" value={form.smellType} onChange={handleChange}>
+          <Select name="scent" value={form.scent} onChange={handleChange}>
             <MenuItem value="シトラス">シトラス</MenuItem>
             <MenuItem value="フルーティ">フルーティ</MenuItem>
             <MenuItem value="フローラル">フローラル</MenuItem>
@@ -190,7 +190,7 @@ const PostCardForm: React.FC = () => {
 
         <FormControl>
           <InputLabel>香水タイプ</InputLabel>
-          <Select name="scent" value={form.scent} onChange={handleChange}>
+          <Select name="smellType" value={form.smellType} onChange={handleChange}>
             <MenuItem value="P">P</MenuItem>
             <MenuItem value="EDP">EDP</MenuItem>
             <MenuItem value="EDT">EDT</MenuItem>

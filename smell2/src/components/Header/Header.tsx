@@ -13,12 +13,19 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+
+import ClearIcon from '@mui/icons-material/Clear';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const Header: React.FC = () => {
-  const [filter, setFilter] = useState('all');
-  const [subFilter, setSubFilter] = useState('');
+  const searchParams = useSearchParams();
+  const initialFilter = searchParams.get('filter') || 'all';
+  const initialSub = searchParams.get('sub') || '';
+
+  const [filter, setFilter] = useState(initialFilter);
+  const [subFilter, setSubFilter] = useState(initialSub);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const router = useRouter();
@@ -39,8 +46,12 @@ const Header: React.FC = () => {
     setFilter(value);
     setSubFilter('');
     setAnchorEl(null);
-    console.log('カテゴリ:', value);
-  };
+
+
+    const params = new URLSearchParams();
+    params.set('filter', value);
+    router.push(`/home?${params.toString()}`);
+
 
   const handleSubFilterChange = (value: string) => {
     setSubFilter(value);
@@ -53,18 +64,18 @@ const Header: React.FC = () => {
   const getSubOptions = () => {
     if (filter === 'gender') {
       return [
-        { value: 'men', label: 'メンズ' },
-        { value: 'women', label: 'レディース' },
-        { value: 'unisex', label: 'ユニセックス' },
+        { value: 'メンズ', label: 'メンズ' },
+        { value: 'レディース', label: 'レディース' },
+        { value: 'ユニセックス', label: 'ユニセックス' },
       ];
     }
     if (filter === 'scent') {
       return [
-        { value: 'citrus', label: 'シトラス' },
-        { value: 'fruity', label: 'フルーティ' },
-        { value: 'floral', label: 'フローラル' },
-        { value: 'chypre', label: 'シプレー' },
-        { value: 'oriental', label: 'オリエンタル' },
+        { value: 'シトラス', label: 'シトラス' },
+        { value: 'フルーティ', label: 'フルーティ' },
+        { value: 'フローラル', label: 'フローラル' },
+        { value: 'シプレー', label: 'シプレー' },
+        { value: 'オリエンタル', label: 'オリエンタル' },
       ];
     }
     if (filter === 'price') {
@@ -85,19 +96,40 @@ const Header: React.FC = () => {
           <Typography
             variant="h6"
             component="div"
-            sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold', cursor: 'pointer' }}
+
+            sx={{
+              textDecoration: 'none',
+              color: 'inherit',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
+
           >
             KaoList
           </Typography>
         </Link>
 
-        {/* 右：カテゴリ選択 + サブカテゴリ + 投稿 */}
+
+        {/* 右：フィルター ＋ 投稿 */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* メインカテゴリ（アイコン + メニュー） */}
-          <Box>
-            <IconButton onClick={handleCategoryClick} sx={{ color: '#333' }}>
+          {/* フィルターグループ */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              px: 2,
+              py: 1,
+              border: '1px solid #ccc',
+              borderRadius: 2,
+              backgroundColor: '#fff',
+            }}
+          >
+            {/* メインカテゴリ */}
+            <IconButton onClick={handleCategoryClick} sx={{ color: '#333', gap: 0.5 }}>
               <SearchIcon />
-              <Typography sx={{ ml: 1, fontSize: '0.9rem' }}>フィルター</Typography>
+              <Typography sx={{ fontSize: '0.9rem' }}>フィルター</Typography>
+
             </IconButton>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
               <MenuItem onClick={() => handleCategorySelect('all')}>すべて</MenuItem>
@@ -105,32 +137,57 @@ const Header: React.FC = () => {
               <MenuItem onClick={() => handleCategorySelect('scent')}>香り</MenuItem>
               <MenuItem onClick={() => handleCategorySelect('price')}>購入金額</MenuItem>
             </Menu>
+
+
+            {/* サブカテゴリ */}
+            {['gender', 'scent', 'price'].includes(filter) && (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {getSubOptions().map((option) => {
+                  const isActive = subFilter === option.value;
+                  return (
+                    <Box
+                      key={option.value}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        border: '1px solid',
+                        borderColor: isActive ? '#1976d2' : '#ccc',
+                        borderRadius: 2,
+                        pl: 1,
+                        pr: isActive ? 0.5 : 1,
+                        backgroundColor: isActive ? '#e3f2fd' : 'transparent',
+                      }}
+                    >
+                      <Button
+                        variant="text"
+                        size="small"
+                        onClick={() => handleSubFilterChange(option.value)}
+                        sx={{
+                          textTransform: 'none',
+                          fontWeight: isActive ? 'bold' : 'normal',
+                          color: isActive ? '#1976d2' : '#333',
+                          minWidth: 0,
+                          padding: '4px 8px',
+                        }}
+                      >
+                        {option.label}
+                      </Button>
+                      {isActive && (
+                        <IconButton
+                          size="small"
+                          onClick={() => handleSubFilterChange('')}
+                          sx={{ color: '#888', p: 0.5 }}
+                        >
+                          <ClearIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
+            )}
           </Box>
 
-          {/* サブカテゴリボタン */}
-          {['gender', 'scent', 'price'].includes(filter) && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {getSubOptions().map((option) => (
-                <Button
-                  key={option.value}
-                  variant={subFilter === option.value ? 'contained' : 'outlined'}
-                  size="small"
-                  onClick={() => handleSubFilterChange(option.value)}
-                  sx={{
-                    textTransform: 'none',
-                    color: subFilter === option.value ? 'white' : '#333',
-                    backgroundColor: subFilter === option.value ? '#1976d2' : 'transparent',
-                    borderColor: '#ccc',
-                    '&:hover': {
-                      backgroundColor: subFilter === option.value ? '#1565c0' : '#f0f0f0',
-                    },
-                  }}
-                >
-                  {option.label}
-                </Button>
-              ))}
-            </Box>
-          )}
 
           {/* 投稿ボタン */}
           <Button
@@ -138,6 +195,9 @@ const Header: React.FC = () => {
             color="primary"
             startIcon={<AddIcon />}
             onClick={handlePostClick}
+
+            sx={{ textTransform: 'none' }}
+
           >
             投稿する
           </Button>
