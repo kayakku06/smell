@@ -1,14 +1,14 @@
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import Header from '@/components/Header/Header';
-import PostPageClient from './PostPageClient';
+import HomePageClient from '../home/HomePageClient';
 
-export default function PostPage() {
+export default function HomePage() {
   return (
     <>
       <Header />
       <main style={{ padding: '24px' }}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <PostPageClient />
+        <Suspense fallback={<div>読み込み中...</div>}>
+          <HomePageClient />
         </Suspense>
       </main>
     </>
