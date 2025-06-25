@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 import { useRouter } from 'next/navigation';
-
+import Image from 'next/image';
 const PostCardForm: React.FC = () => {
   const router = useRouter(); // ← 追加
   const [form, setForm] = useState({
@@ -213,13 +213,14 @@ const PostCardForm: React.FC = () => {
             画像をアップロード
           </Button>
         </label>
-
         {imagePreview && (
           <Box mt={2}>
-            <img
+            <Image
               src={imagePreview}
               alt="プレビュー"
-              style={{ width: '200px', borderRadius: '8px', objectFit: 'cover' }}
+              width={200}
+              height={200}
+              style={{ borderRadius: '8px', objectFit: 'cover' }}
             />
           </Box>
         )}
