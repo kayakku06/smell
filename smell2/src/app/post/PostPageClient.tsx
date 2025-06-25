@@ -101,7 +101,7 @@ const PostPageClient: React.FC = () => {
                 alert('投稿が完了しました！');
                 router.push('/home');
             }
-        } catch (_) {
+        } catch  {
             alert('投稿中にエラーが発生しました');
         }
     };
