@@ -4,7 +4,7 @@ import { Card, CardContent, Typography, Box, Rating } from '@mui/material';
 import Image from 'next/image';
 
 type Post = {
-  id: string;
+  
   perfumeName: string;
   brandName?: string;
   volume: string;
@@ -21,7 +21,6 @@ type Post = {
 };
 
 const PostCard: React.FC<Post> = ({
-  id,
   perfumeName,
   brandName,
   volume,
