@@ -101,7 +101,7 @@ const PostPageClient: React.FC = () => {
                 alert('投稿が完了しました！');
                 router.push('/home');
             }
-        } catch  {
+        } catch {
             alert('投稿中にエラーが発生しました');
         }
     };
@@ -126,7 +126,9 @@ const PostPageClient: React.FC = () => {
                     <Select name="scent" value={form.scent} onChange={handleChange}>
                         <MenuItem value="シトラス">シトラス</MenuItem>
                         <MenuItem value="フローラル">フローラル</MenuItem>
-                        <MenuItem value="ウッディ">ウッディ</MenuItem>
+                        <MenuItem value="フルーティ">フルーティ</MenuItem>
+                        <MenuItem value="シプレー">シプレー</MenuItem>
+                        <MenuItem value="オリエンタル">オリエンタル</MenuItem>
                     </Select>
                 </FormControl>
                 <FormControl><InputLabel>香水タイプ</InputLabel>
@@ -141,14 +143,106 @@ const PostPageClient: React.FC = () => {
 
             <Box mt={3}>
                 <Typography gutterBottom>画像アップロード</Typography>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
-                {imagePreview && (
-                    <Box mt={2}>
-                        <Image src={imagePreview} alt="Preview" width={200} height={200} />
-                    </Box>
-                )}
+
+                <Box
+                    sx={{
+                        border: '2px dashed #ccc',
+                        borderRadius: 2,
+                        p: 2,
+                        textAlign: 'center',
+                        backgroundColor: '#fafafa',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        '&:hover': {
+                            backgroundColor: '#f0f0f0',
+                        },
+                    }}
+                    onClick={() => {
+                        if (!imagePreview) document.getElementById('image-upload')?.click();
+                    }}
+                >
+                    {imagePreview ? (
+                        <>
+                            <Image
+                                src={imagePreview}
+                                alt="Preview"
+                                width={200}
+                                height={200}
+                                style={{
+                                    objectFit: 'cover',
+                                    borderRadius: '1rem',
+                                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                                }}
+                            />
+                            <Button
+                                size="small"
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Box の click 発火防止
+                                    setImagePreview(null);
+                                    setForm((prev) => ({ ...prev, imageSrc: null }));
+                                }}
+                                sx={{
+                                    position: 'absolute',
+                                    top: 8,
+                                    right: 8,
+                                    minWidth: 0,
+                                    padding: '4px',
+                                    backgroundColor: 'rgba(255,255,255,0.8)',
+                                    borderRadius: '50%',
+                                    color: '#333',
+                                    '&:hover': {
+                                        backgroundColor: '#fdd',
+                                        color: '#c00',
+                                    },
+                                }}
+                            >
+                                ✕
+                            </Button>
+                        </>
+                    ) : (
+                        <Typography variant="body2" color="textSecondary">
+                            画像を投稿するにはクリックしてください
+                        </Typography>
+                    )}
+                </Box>
+
+                <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                />
             </Box>
 
+
+
+            <Box mt={3} display="flex" justifyContent="space-between" gap={4}>
+                <Box minWidth={160}>
+                    <Typography noWrap>匂いの持続</Typography>
+                    <Rating
+                        value={form.longevity}
+                        precision={0.5}
+                        onChange={(_, v) => handleRatingChange('longevity', v)}
+                    />
+                </Box>
+                <Box minWidth={160}>
+                    <Typography noWrap>コスパ</Typography>
+                    <Rating
+                        value={form.costPerformance}
+                        precision={0.5}
+                        onChange={(_, v) => handleRatingChange('costPerformance', v)}
+                    />
+                </Box>
+                <Box minWidth={160}>
+                    <Typography noWrap>手に入りやすさ</Typography>
+                    <Rating
+                        value={form.availability}
+                        precision={0.5}
+                        onChange={(_, v) => handleRatingChange('availability', v)}
+                    />
+                </Box>
+            </Box>
             <Box mt={3}>
                 <TextField
                     fullWidth
@@ -161,18 +255,11 @@ const PostPageClient: React.FC = () => {
                 />
             </Box>
 
-            <Box mt={3}>
-                <Typography>匂いの持続</Typography>
-                <Rating value={form.longevity} onChange={(_, v) => handleRatingChange('longevity', v)} />
-                <Typography>コスパ</Typography>
-                <Rating value={form.costPerformance} onChange={(_, v) => handleRatingChange('costPerformance', v)} />
-                <Typography>手に入りやすさ</Typography>
-                <Rating value={form.availability} onChange={(_, v) => handleRatingChange('availability', v)} />
+            <Box display="flex" justifyContent="flex-end" mt={3}>
+                <Button variant="contained" onClick={handleSubmit}>
+                    投稿する
+                </Button>
             </Box>
-
-            <Button variant="contained" sx={{ mt: 3 }} onClick={handleSubmit}>
-                投稿する
-            </Button>
         </Box>
     );
 };
