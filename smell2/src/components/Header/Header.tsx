@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+
 import ClearIcon from '@mui/icons-material/Clear';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -24,6 +25,7 @@ const Header: React.FC = () => {
 
   const [filter, setFilter] = useState(initialFilter);
   const [subFilter, setSubFilter] = useState(initialSub);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const router = useRouter();
@@ -45,10 +47,11 @@ const Header: React.FC = () => {
     setSubFilter('');
     setAnchorEl(null);
 
+
     const params = new URLSearchParams();
     params.set('filter', value);
     router.push(`/home?${params.toString()}`);
-  };
+
 
   const handleSubFilterChange = (value: string) => {
     setSubFilter(value);
@@ -93,16 +96,19 @@ const Header: React.FC = () => {
           <Typography
             variant="h6"
             component="div"
+
             sx={{
               textDecoration: 'none',
               color: 'inherit',
               fontWeight: 'bold',
               cursor: 'pointer',
             }}
+
           >
             KaoList
           </Typography>
         </Link>
+
 
         {/* 右：フィルター ＋ 投稿 */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -123,6 +129,7 @@ const Header: React.FC = () => {
             <IconButton onClick={handleCategoryClick} sx={{ color: '#333', gap: 0.5 }}>
               <SearchIcon />
               <Typography sx={{ fontSize: '0.9rem' }}>フィルター</Typography>
+
             </IconButton>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
               <MenuItem onClick={() => handleCategorySelect('all')}>すべて</MenuItem>
@@ -130,6 +137,7 @@ const Header: React.FC = () => {
               <MenuItem onClick={() => handleCategorySelect('scent')}>香り</MenuItem>
               <MenuItem onClick={() => handleCategorySelect('price')}>購入金額</MenuItem>
             </Menu>
+
 
             {/* サブカテゴリ */}
             {['gender', 'scent', 'price'].includes(filter) && (
@@ -180,13 +188,16 @@ const Header: React.FC = () => {
             )}
           </Box>
 
+
           {/* 投稿ボタン */}
           <Button
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
             onClick={handlePostClick}
+
             sx={{ textTransform: 'none' }}
+
           >
             投稿する
           </Button>
