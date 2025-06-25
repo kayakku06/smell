@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Header from '@/components/Header/Header';
 import PostCard from '@/components/postcard/postcard';
 import { supabase } from '@/lib/supabase';
@@ -32,7 +32,7 @@ type Post = {
   comment?: string;
 };
 
-export default function HomePage() {
+function HomeContent() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [sort, setSort] = useState('newest');
   const searchParams = useSearchParams();
@@ -139,21 +139,30 @@ export default function HomePage() {
           </Select>
         </FormControl>
       </Box>
-<main style={{ padding: '24px' }}>
-  <Typography variant="h5" gutterBottom>ようこそ KaoList へ</Typography>
 
-  <Box
-    sx={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)', // 横2枚ずつ
-      gap: 3,
-    }}
-  >
-    {sortedPosts.map((post) => (
-      <PostCard key={post.id} {...post} />
-    ))}
-  </Box>
-</main>
+      <main style={{ padding: '24px' }}>
+        <Typography variant="h5" gutterBottom>ようこそ KaoList へ</Typography>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 3,
+          }}
+        >
+          {sortedPosts.map((post) => (
+            <PostCard key={post.id} {...post} />
+          ))}
+        </Box>
+      </main>
     </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div>読み込み中...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
