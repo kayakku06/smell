@@ -3,7 +3,7 @@
 import { supabase, getImageUrl } from '@/lib/supabase';
 import React, { useState } from 'react';
 import {
-  Box, TextField, Typography, Button, Rating, MenuItem, Select, InputLabel, FormControl, InputAdornment
+  Box, TextField, Typography, Button, Rating, MenuItem, Select, InputLabel, FormControl, InputAdornment,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -25,7 +25,6 @@ const PostPageClient: React.FC = () => {
     comment: '',
     imageSrc: null as File | null,
   });
-
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleChange = (
@@ -62,7 +61,6 @@ const PostPageClient: React.FC = () => {
       }
 
       let uploadedImageUrl = '';
-
       if (form.imageSrc) {
         const fileExt = form.imageSrc.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
@@ -74,7 +72,6 @@ const PostPageClient: React.FC = () => {
           .upload(filePath, form.imageSrc);
 
         if (imageError) {
-          console.error('Image upload error object:', imageError);
           alert(`画像のアップロードに失敗しました: ${imageError.message}`);
           return;
         }
@@ -98,16 +95,14 @@ const PostPageClient: React.FC = () => {
       };
 
       const { error: insertError } = await supabase.from('post').insert([insertData]);
-
       if (insertError) {
         alert(`投稿に失敗しました: ${insertError.message}`);
       } else {
-        alert('投稿が完了しました！（画像付き）');
+        alert('投稿が完了しました！');
         router.push('/home');
       }
     } catch (err) {
-      console.error(err);
-      alert('不明なエラーが発生しました');
+      alert('投稿中にエラーが発生しました');
     }
   };
 
@@ -118,44 +113,23 @@ const PostPageClient: React.FC = () => {
       <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={2}>
         <TextField label="香水名" name="perfumeName" value={form.perfumeName} onChange={handleChange} />
         <TextField label="ブランド名" name="brandName" value={form.brandName} onChange={handleChange} />
-        <TextField
-          label="内容量"
-          name="volume"
-          value={form.volume}
-          onChange={handleChange}
-          type="number"
-          InputProps={{ endAdornment: <InputAdornment position="end">ml</InputAdornment> }}
-          inputProps={{ step: 15 }}
-        />
-        <TextField
-          label="購入金額"
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-          type="number"
-          InputProps={{ startAdornment: <InputAdornment position="start">¥</InputAdornment> }}
-          inputProps={{ step: 1000 }}
-        />
-        <FormControl>
-          <InputLabel>性別</InputLabel>
+        <TextField label="内容量" name="volume" type="number" value={form.volume} onChange={handleChange} />
+        <TextField label="価格" name="price" type="number" value={form.price} onChange={handleChange} />
+        <FormControl><InputLabel>性別</InputLabel>
           <Select name="gender" value={form.gender} onChange={handleChange}>
             <MenuItem value="メンズ">メンズ</MenuItem>
             <MenuItem value="レディース">レディース</MenuItem>
             <MenuItem value="ユニセックス">ユニセックス</MenuItem>
           </Select>
         </FormControl>
-        <FormControl>
-          <InputLabel>香りの種類</InputLabel>
+        <FormControl><InputLabel>香りの種類</InputLabel>
           <Select name="scent" value={form.scent} onChange={handleChange}>
             <MenuItem value="シトラス">シトラス</MenuItem>
-            <MenuItem value="フルーティ">フルーティ</MenuItem>
             <MenuItem value="フローラル">フローラル</MenuItem>
-            <MenuItem value="シプレー">シプレー</MenuItem>
-            <MenuItem value="オリエンタル">オリエンタル</MenuItem>
+            <MenuItem value="ウッディ">ウッディ</MenuItem>
           </Select>
         </FormControl>
-        <FormControl>
-          <InputLabel>香水タイプ</InputLabel>
+        <FormControl><InputLabel>香水タイプ</InputLabel>
           <Select name="smellType" value={form.smellType} onChange={handleChange}>
             <MenuItem value="P">P</MenuItem>
             <MenuItem value="EDP">EDP</MenuItem>
@@ -166,43 +140,13 @@ const PostPageClient: React.FC = () => {
       </Box>
 
       <Box mt={3}>
-        <Typography gutterBottom>画像を選択</Typography>
-        <label htmlFor="image-upload">
-          <input
-            accept="image/*"
-            id="image-upload"
-            type="file"
-            style={{ display: 'none' }}
-            onChange={handleImageChange}
-          />
-          <Button variant="outlined" component="span">画像をアップロード</Button>
-        </label>
+        <Typography gutterBottom>画像アップロード</Typography>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
         {imagePreview && (
           <Box mt={2}>
-            <Image
-              src={imagePreview}
-              alt="プレビュー"
-              width={200}
-              height={200}
-              style={{ borderRadius: '8px', objectFit: 'cover' }}
-            />
+            <Image src={imagePreview} alt="Preview" width={200} height={200} />
           </Box>
         )}
-      </Box>
-
-      <Box mt={4} display="flex" gap={4}>
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Typography gutterBottom>匂いの持続</Typography>
-          <Rating value={form.longevity} onChange={(_, val) => handleRatingChange('longevity', val)} />
-        </Box>
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Typography gutterBottom>コストパフォーマンス</Typography>
-          <Rating value={form.costPerformance} onChange={(_, val) => handleRatingChange('costPerformance', val)} />
-        </Box>
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Typography gutterBottom>手に入れやすさ</Typography>
-          <Rating value={form.availability} onChange={(_, val) => handleRatingChange('availability', val)} />
-        </Box>
       </Box>
 
       <Box mt={3}>
@@ -211,13 +155,22 @@ const PostPageClient: React.FC = () => {
           label="コメント"
           name="comment"
           multiline
-          rows={4}
+          rows={3}
           value={form.comment}
           onChange={handleChange}
         />
       </Box>
 
-      <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleSubmit}>
+      <Box mt={3}>
+        <Typography>匂いの持続</Typography>
+        <Rating value={form.longevity} onChange={(_, v) => handleRatingChange('longevity', v)} />
+        <Typography>コスパ</Typography>
+        <Rating value={form.costPerformance} onChange={(_, v) => handleRatingChange('costPerformance', v)} />
+        <Typography>手に入りやすさ</Typography>
+        <Rating value={form.availability} onChange={(_, v) => handleRatingChange('availability', v)} />
+      </Box>
+
+      <Button variant="contained" sx={{ mt: 3 }} onClick={handleSubmit}>
         投稿する
       </Button>
     </Box>

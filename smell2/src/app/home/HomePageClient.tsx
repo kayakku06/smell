@@ -35,7 +35,6 @@ export default function HomePageClient() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [sort, setSort] = useState('newest');
   const searchParams = useSearchParams();
-
   const filter = searchParams.get('filter');
   const sub = searchParams.get('sub');
 
@@ -51,9 +50,7 @@ export default function HomePageClient() {
         return;
       }
 
-      if (data) {
-        setPosts(data);
-      }
+      if (data) setPosts(data);
     };
 
     fetchPosts();
@@ -65,7 +62,6 @@ export default function HomePageClient() {
 
     if (filter === 'gender') return post.gender === sub;
     if (filter === 'scent') return post.scent === sub;
-
     if (filter === 'price') {
       const price = parseInt(post.price || '0', 10);
       if (sub === 'under5000') return price <= 5000;
@@ -138,21 +134,20 @@ export default function HomePageClient() {
         </FormControl>
       </Box>
 
-      <Typography variant="h5" gutterBottom sx={{ mt: 3 }}>
-        ようこそ KaoList へ
-      </Typography>
-
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 3,
-        }}
-      >
-        {sortedPosts.map((post) => (
-          <PostCard key={post.id} {...post} />
-        ))}
-      </Box>
+      <main style={{ padding: '24px' }}>
+        <Typography variant="h5" gutterBottom>ようこそ KaoList へ</Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 3,
+          }}
+        >
+          {sortedPosts.map((post) => (
+            <PostCard key={post.id} {...post} />
+          ))}
+        </Box>
+      </main>
     </>
   );
 }
