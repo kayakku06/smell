@@ -5,8 +5,9 @@ import HomePageClient from './HomePageClient';
 export default function HomePage() {
   return (
     <>
-      <Header />
+     
       <Suspense fallback={<div>読み込み中...</div>}>
+      <Header />
         <HomePageClient />
       </Suspense>
     </>
