@@ -32,7 +32,7 @@ const Header: React.FC = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
 
   const handlePostClick = () => {
     router.push('/post');
