@@ -4,15 +4,14 @@ import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   Box,
-  IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import Image from 'next/image';
 
 const Header: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -48,18 +47,21 @@ const Header: React.FC = () => {
     <AppBar position="static" sx={{ backgroundColor: '#f8f4f0', color: '#333' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Link href="/home" passHref>
-          <Typography
-            variant="h6"
-            component="div"
+          <Box
+            component="a"
             sx={{
-              textDecoration: 'none',
-              color: 'inherit',
-              fontWeight: 'bold',
-              cursor: 'pointer',
+              display: 'block',
+              width: { xs: '40%', sm: '40%', md: '40%' },
             }}
           >
-            KaoList
-          </Typography>
+            <Image
+              src="/pictures/logo.png"
+              alt="KaoList Logo"
+              width={300} // ダミー値（実際は無視される）
+              height={75}
+              style={{ width: '500%', height: '100px', objectFit: 'contain' }}
+            />
+          </Box>
         </Link>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -89,16 +91,14 @@ const Header: React.FC = () => {
               ログアウト
             </Button>
           ) : (
-            <>
-              <Button
-                variant="outlined"
-                color="inherit"
-                onClick={handleLogin}
-                sx={{ textTransform: 'none' }}
-              >
-                ログイン・新規登録
-              </Button>
-            </>
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={handleLogin}
+              sx={{ textTransform: 'none' }}
+            >
+              ログイン・新規登録
+            </Button>
           )}
         </Box>
       </Toolbar>
