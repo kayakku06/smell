@@ -4,7 +4,7 @@ import { supabase, getImageUrl } from '@/lib/supabase';
 import React, { useState } from 'react';
 import {
   Box, TextField, Typography, Button, Rating, MenuItem, Select,
-  InputLabel, FormControl, useMediaQuery, useTheme
+  InputLabel, FormControl,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -12,7 +12,6 @@ import Image from 'next/image';
 
 const PostPageClient: React.FC = () => {
   const router = useRouter();
-  const theme = useTheme();
  
 
   const [form, setForm] = useState({
