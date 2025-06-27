@@ -78,7 +78,7 @@ const Header: React.FC = () => {
         { value: 'シトラス', label: 'シトラス' },
         { value: 'フルーティ', label: 'フルーティ' },
         { value: 'フローラル', label: 'フローラル' },
-        { value: 'シプレー', label: 'シプレー' },
+        { value: 'シプレ', label: 'シプレ' },
         { value: 'オリエンタル', label: 'オリエンタル' },
       ];
     }
