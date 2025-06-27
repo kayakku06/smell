@@ -11,7 +11,6 @@ import {
   MenuItem,
   IconButton,
   Collapse,
-  useMediaQuery,
   useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -31,7 +30,7 @@ const Header: React.FC = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const router = useRouter();
-  const theme = useTheme();
+ 
   
 
   const handlePostClick = () => {
