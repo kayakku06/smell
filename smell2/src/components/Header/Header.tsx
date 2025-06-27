@@ -26,9 +26,14 @@ const Header: React.FC = () => {
     getUser();
   }, []);
 
-  const handlePostClick = () => {
-    router.push('/post');
+  const handlePostClick = async () => {
+    if (!user) {
+      await handleLogin(); // 未ログインならGoogleログインへ誘導
+    } else {
+      router.push('/post');
+    }
   };
+
 
   const handleLogin = async () => {
     await supabase.auth.signInWithOAuth({
