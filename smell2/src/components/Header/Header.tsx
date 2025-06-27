@@ -46,24 +46,25 @@ const Header: React.FC = () => {
   return (
     <AppBar position="static" sx={{ backgroundColor: '#f8f4f0', color: '#333' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Link href="/home" passHref>
+        <Link href="/home">
           <Box
-            component="a"
             sx={{
-              display: 'block',
-              width: { xs: '40%', sm: '40%', md: '40%' },
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              width: '40%'
             }}
           >
             <Image
               src="/pictures/logo.png"
               alt="KaoList Logo"
-              width={300} // ダミー値（実際は無視される）
-              height={75}
+              width={300}
+              height={100}
               style={{ width: '500%', height: '100px', objectFit: 'contain' }}
             />
           </Box>
         </Link>
-
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Button
             variant="contained"

@@ -271,7 +271,7 @@ export default function HomePageClient() {
 
       <main style={{ padding: '24px' }}>
         <Typography variant="h5" gutterBottom>
-          ようこそ KaoList へ
+          
         </Typography>
         <Box
           sx={{
