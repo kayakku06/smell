@@ -139,8 +139,13 @@ export default function HomePageClient() {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
             gap: 3,
+            gridTemplateColumns: {
+              xs: '1fr',              // スマホ（〜599px）：1列
+              sm: 'repeat(2, 1fr)',   // タブレット（600px〜）：2列
+            },
+            justifyContent: 'center',
+            alignItems: 'stretch',
           }}
         >
           {sortedPosts.map((post) => (
