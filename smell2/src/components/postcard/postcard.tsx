@@ -1,10 +1,10 @@
 'use client';
-import React from 'react';
-import { Card, CardContent, Typography, Box, Rating } from '@mui/material';
+
+import React, { useState, useRef, useEffect } from 'react';
+import { Card, CardContent, Typography, Box, Rating, useMediaQuery, useTheme } from '@mui/material';
 import Image from 'next/image';
 
 type Post = {
-  
   perfumeName: string;
   brandName?: string;
   volume: string;
@@ -36,6 +36,22 @@ const PostCard: React.FC<Post> = ({
   comment,
 }) => {
   const averageRating = ((costPerformance + longevity + accessibility) / 3).toFixed(1);
+  const [expanded, setExpanded] = useState(false);
+  const [showToggle, setShowToggle] = useState(false);
+  const commentRef = useRef<HTMLDivElement>(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const maxLineClamp = isMobile ? 2 : 3;
+
+  useEffect(() => {
+    const el = commentRef.current;
+    if (el) {
+      const lineHeight = parseFloat(getComputedStyle(el).lineHeight || '20');
+      const maxHeight = lineHeight * maxLineClamp;
+      setShowToggle(el.scrollHeight > maxHeight);
+    }
+  }, [comment, maxLineClamp]);
 
   return (
     <Card
@@ -49,11 +65,11 @@ const PostCard: React.FC<Post> = ({
         alignItems: 'stretch',
       }}
     >
-      {/* 左側：画像 */}
       {imageSrc && (
         <Box
           sx={{
-            width: 250,
+            width: '30%',
+            aspectRatio: '3 / 4',
             position: 'relative',
             overflow: 'hidden',
             flexShrink: 0,
@@ -62,11 +78,8 @@ const PostCard: React.FC<Post> = ({
           <Image
             src={imageSrc}
             alt={perfumeName}
-            width={250}
-            height={0}
+            fill
             style={{
-              width: '100%',
-              height: '100%',
               objectFit: 'cover',
               borderTopLeftRadius: 12,
               borderBottomLeftRadius: 12,
@@ -75,7 +88,6 @@ const PostCard: React.FC<Post> = ({
         </Box>
       )}
 
-      {/* 右側：上部情報＋下部コメント */}
       <Box
         sx={{
           flex: 1,
@@ -83,11 +95,8 @@ const PostCard: React.FC<Post> = ({
           flexDirection: 'column',
         }}
       >
-        {/* 上部：香水情報 */}
         <CardContent sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h6" fontWeight="bold">
-            {perfumeName}
-          </Typography>
+          <Typography variant="h6" fontWeight="bold">{perfumeName}</Typography>
           <Typography variant="subtitle2" color="text.secondary">
             ブランド: {brandName ?? '未設定'} / 内容量: {volume}ml
           </Typography>
@@ -101,9 +110,7 @@ const PostCard: React.FC<Post> = ({
             コスパ: {costPerformance} / 持続時間: {longevity} / 手に入れやすさ: {accessibility}
           </Typography>
           <Box mt={1}>
-            <Typography variant="body2" fontWeight="bold">
-              総合評価: {averageRating}
-            </Typography>
+            <Typography variant="body2" fontWeight="bold">総合評価: {averageRating}</Typography>
             <Rating value={parseFloat(averageRating)} precision={0.1} readOnly />
           </Box>
           <Typography variant="caption" color="text.secondary" display="block" mt={1}>
@@ -118,20 +125,40 @@ const PostCard: React.FC<Post> = ({
           </Typography>
         </CardContent>
 
-        {/* 下部：コメント */}
-        <Box
-          sx={{
-            padding: 2,
-            borderTop: '1px solid #ccc',
-            backgroundColor: '#f9f9f9',
-          }}
-        >
+        {/* コメント */}
+        <Box sx={{ padding: 2, borderTop: '1px solid #ccc', backgroundColor: '#f9f9f9' }}>
           <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
             コメント
           </Typography>
-          <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-            {comment || 'コメントはまだありません。'}
-          </Typography>
+
+          <Box
+            ref={commentRef}
+            sx={{
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              WebkitLineClamp: expanded ? 'none' : maxLineClamp,
+              transition: 'all 0.3s ease',
+              whiteSpace: 'pre-wrap',
+            }}
+          >
+            <Typography variant="body2">
+              {comment || 'コメントはまだありません。'}
+            </Typography>
+          </Box>
+
+          {showToggle && (
+            <Box mt={1}>
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{ cursor: 'pointer', userSelect: 'none' }}
+                onClick={() => setExpanded(!expanded)}
+              >
+                {expanded ? '閉じる' : 'もっと見る'}
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Box>
     </Card>
