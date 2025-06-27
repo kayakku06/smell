@@ -106,7 +106,7 @@ const PostPageClient: React.FC = () => {
 
       <Box
         display="grid"
-        gap={2}
+        gap={4}
         sx={{
           gridTemplateColumns: {
             xs: 'repeat(2, 1fr)',

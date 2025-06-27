@@ -1,7 +1,15 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, Typography, Box, Rating, useMediaQuery, useTheme } from '@mui/material';
+import React from 'react';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Rating,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import Image from 'next/image';
 
 type Post = {
@@ -35,23 +43,11 @@ const PostCard: React.FC<Post> = ({
   created_at,
   comment,
 }) => {
-  const averageRating = ((costPerformance + longevity + accessibility) / 3).toFixed(1);
-  const [expanded, setExpanded] = useState(false);
-  const [showToggle, setShowToggle] = useState(false);
-  const commentRef = useRef<HTMLDivElement>(null);
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const maxLineClamp = isMobile ? 2 : 3;
+  const commentBoxHeight = isMobile ? '3em' : '4.5em'; // 常に固定高さにする
 
-  useEffect(() => {
-    const el = commentRef.current;
-    if (el) {
-      const lineHeight = parseFloat(getComputedStyle(el).lineHeight || '20');
-      const maxHeight = lineHeight * maxLineClamp;
-      setShowToggle(el.scrollHeight > maxHeight);
-    }
-  }, [comment, maxLineClamp]);
+  const averageRating = ((costPerformance + longevity + accessibility) / 3).toFixed(1);
 
   return (
     <Card
@@ -69,32 +65,35 @@ const PostCard: React.FC<Post> = ({
         <Box
           sx={{
             width: '30%',
-            aspectRatio: '3 / 4',
             position: 'relative',
             overflow: 'hidden',
             flexShrink: 0,
           }}
         >
-          <Image
-            src={imageSrc}
-            alt={perfumeName}
-            fill
-            style={{
-              objectFit: 'cover',
-              borderTopLeftRadius: 12,
-              borderBottomLeftRadius: 12,
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: 0,
             }}
-          />
+          >
+            <Image
+              src={imageSrc}
+              alt={perfumeName}
+              fill
+              style={{
+                objectFit: 'cover',
+                borderTopLeftRadius: 12,
+                borderBottomLeftRadius: 12,
+              }}
+            />
+          </Box>
         </Box>
       )}
 
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <CardContent sx={{ flex: '1 1 auto' }}>
           <Typography variant="h6" fontWeight="bold">{perfumeName}</Typography>
           <Typography variant="subtitle2" color="text.secondary">
@@ -125,20 +124,15 @@ const PostCard: React.FC<Post> = ({
           </Typography>
         </CardContent>
 
-        {/* コメント */}
+        {/* コメント欄（高さ固定） */}
         <Box sx={{ padding: 2, borderTop: '1px solid #ccc', backgroundColor: '#f9f9f9' }}>
           <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
             コメント
           </Typography>
-
           <Box
-            ref={commentRef}
             sx={{
-              display: '-webkit-box',
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              WebkitLineClamp: expanded ? 'none' : maxLineClamp,
-              transition: 'all 0.3s ease',
+              height: commentBoxHeight,
+              overflowY: 'auto',
               whiteSpace: 'pre-wrap',
             }}
           >
@@ -146,19 +140,6 @@ const PostCard: React.FC<Post> = ({
               {comment || 'コメントはまだありません。'}
             </Typography>
           </Box>
-
-          {showToggle && (
-            <Box mt={1}>
-              <Typography
-                variant="body2"
-                color="primary"
-                sx={{ cursor: 'pointer', userSelect: 'none' }}
-                onClick={() => setExpanded(!expanded)}
-              >
-                {expanded ? '閉じる' : 'もっと見る'}
-              </Typography>
-            </Box>
-          )}
         </Box>
       </Box>
     </Card>
