@@ -11,10 +11,11 @@ import AddIcon from '@mui/icons-material/Add';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
 
 const Header: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const Header: React.FC = () => {
               alignItems: 'center',
               textDecoration: 'none',
               cursor: 'pointer',
-              width: '40%'
+              width: '40%',
             }}
           >
             <Image
@@ -65,6 +66,7 @@ const Header: React.FC = () => {
             />
           </Box>
         </Link>
+
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Button
             variant="contained"
