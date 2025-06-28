@@ -12,7 +12,6 @@ import Image from 'next/image';
 
 const PostPageClient: React.FC = () => {
   const router = useRouter();
- 
 
   const [form, setForm] = useState({
     perfumeName: '', brandName: '', volume: '', price: '', smellType: '', gender: '', scent: '',
@@ -40,7 +39,8 @@ const PostPageClient: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       setForm(prev => ({ ...prev, imageSrc: file }));
-      setImagePreview(URL.createObjectURL(file));
+      const localUrl = URL.createObjectURL(file);
+      setImagePreview(localUrl);
     }
   };
 
@@ -71,6 +71,7 @@ const PostPageClient: React.FC = () => {
         }
 
         uploadedImageUrl = getImageUrl(filePath);
+        setImagePreview(uploadedImageUrl); // プレビューにSupabase URLを反映
       }
 
       const insertData = {
